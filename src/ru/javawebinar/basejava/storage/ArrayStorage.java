@@ -9,9 +9,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
+    public static final int UUID_NOT_FOUND = -1;
     public static final int MAX_RESUME_AMOUNT = 10000;
     private Resume[] storage = new Resume[MAX_RESUME_AMOUNT];
-    public static final int UUID_NOT_FOUND = -1;
     private int resumeAmount = 0;
     private Request request;
 
@@ -36,9 +36,10 @@ public class ArrayStorage {
         boolean validity1;
         boolean validity2;
 
-        request = new Request(uuid, "updateUUID1");
+        request = new Request(uuid, "uuid old");
         validity1 = request.isValid(this);
-        request = new Request(uuidNew, "updateUUID2");
+
+        request = new Request(uuidNew, "uuid new");
         validity2 = request.isValid(this);
 
         if (validity1 && validity2) {
@@ -48,6 +49,7 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         request = new Request(uuid, "get");
+
         if (request.isValid(this)) {
             return storage[uuidFinder(uuid)];
         }
@@ -56,6 +58,7 @@ public class ArrayStorage {
 
     public void delete(String uuid) {
         request = new Request(uuid, "delete");
+
         if (request.isValid(this)) {
             int resumeIndex = uuidFinder(uuid);
             System.arraycopy(storage, resumeIndex + 1, storage, resumeIndex, resumeAmount - 1 - resumeIndex);
@@ -69,6 +72,7 @@ public class ArrayStorage {
      */
     public Resume[] getAll() {
         Resume[] resumes = new Resume[resumeAmount];
+
         System.arraycopy(storage, 0, resumes, 0, resumeAmount);
         return resumes;
     }
