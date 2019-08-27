@@ -19,7 +19,7 @@ public class MainArray {
         Resume resume;
 
         while (true) {
-            System.out.print("Введите одну из команд - (list | size | save uuid | update | delete uuid | get uuid | clear | exit): ");
+            System.out.print("Введите одну из команд - (list | size | save uuid | update uuid resume | delete uuid | get uuid | clear | exit): ");
             String[] params = reader.readLine().trim().toLowerCase().split(" ");
 
             if ((params.length < 1) || (params.length > 3)) {
@@ -28,12 +28,8 @@ public class MainArray {
             }
 
             String uuid = null;
-            String uuidNew = null;
             if (params.length != 1) {
                 uuid = params[1].intern();
-                if (params.length == 3) {
-                    uuidNew = params[2].intern();
-                }
             }
             switch (params[0]) {
                 case "list":
@@ -48,7 +44,10 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    ARRAY_STORAGE.update(uuid, uuidNew);
+                    System.out.println("введите uuid для создания нового резюме");
+                    String uuidNew = reader.readLine();
+                    resume = new Resume(uuidNew);
+                    ARRAY_STORAGE.update(uuid, resume);
                     printAll();
                     break;
                 case "delete":

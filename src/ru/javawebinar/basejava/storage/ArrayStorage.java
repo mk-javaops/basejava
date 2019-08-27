@@ -1,6 +1,5 @@
 package ru.javawebinar.basejava.storage;
 
-import ru.javawebinar.basejava.Request;
 import ru.javawebinar.basejava.model.Resume;
 
 import java.util.Arrays;
@@ -9,11 +8,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    public static final int UUID_NOT_FOUND = -1;
     public static final int MAX_RESUME_AMOUNT = 10000;
     private Resume[] storage = new Resume[MAX_RESUME_AMOUNT];
     private int resumeAmount = 0;
-    private Request request;
 
     public int getResumeAmount() {
         return resumeAmount;
@@ -25,42 +22,73 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        request = new Request(resume.toString(), "save");
-        if (request.isValid(this)) {
+        boolean validity = true;
+        String uuid = resume.getUuid();
+
+        if (uuid == null) {
+            System.out.println(" ERROR! resume uuid can`t be empty");
+            validity = false;
+        } else if (uuidFinder(uuid) != -1) {
+            System.out.println(" ERROR! Resume save uuid is not unique.");
+            validity = false;
+        } else if (resumeAmount == MAX_RESUME_AMOUNT) {
+            System.out.println(" ERROR! Resume storage is overloaded");
+            validity = false;
+        }
+        if (validity) {
             storage[resumeAmount] = resume;
             resumeAmount++;
         }
     }
 
-    public void update(String uuid, String uuidNew) {
-        boolean validity1;
-        boolean validity2;
+    public void update(String uuid, Resume resume) {
+        boolean validity = true;
+        int resumeIndex = uuidFinder(uuid);
+        String uuidNew = resume.getUuid();
 
-        request = new Request(uuid, "uuid old");
-        validity1 = request.isValid(this);
-
-        request = new Request(uuidNew, "uuid new");
-        validity2 = request.isValid(this);
-
-        if (validity1 && validity2) {
-            storage[uuidFinder(uuid)].setUuid(uuidNew);
+        if (uuid == null) {
+            System.out.println(" ERROR! uuid of resume can`t be empty");
+            validity = false;
+        } else if (uuidFinder(uuid) == -1) {
+            System.out.println(" Error! Nothing to get. Updated resume does`t exist");
+            validity = false;
+        } else if (uuidFinder(uuidNew) != -1) {
+            System.out.println(" ERROR! Updated resume uuid is not unique.");
+            validity = false;
+        }
+        if (validity) {
+            storage[resumeIndex] = resume;
         }
     }
 
     public Resume get(String uuid) {
-        request = new Request(uuid, "get");
+        boolean validity = true;
 
-        if (request.isValid(this)) {
+        if (uuid == null) {
+            System.out.println(" ERROR! resume uuid can`t be empty");
+            validity = false;
+        } else if (uuidFinder(uuid) == -1) {
+            System.out.println(" Error! Nothing to get. Resume uuid not found");
+            validity = false;
+        }
+        if (validity) {
             return storage[uuidFinder(uuid)];
         }
         return null;
     }
 
     public void delete(String uuid) {
-        request = new Request(uuid, "delete");
+        boolean validity = true;
+        int resumeIndex = uuidFinder(uuid);
 
-        if (request.isValid(this)) {
-            int resumeIndex = uuidFinder(uuid);
+        if (uuid == null) {
+            System.out.println(" ERROR! resume uuid can`t be empty");
+            validity = false;
+        } else if (resumeIndex == -1) {
+            System.out.println(" Error! Nothing to delete. Resume uuid not found");
+            validity = false;
+        }
+        if (validity) {
             System.arraycopy(storage, resumeIndex + 1, storage, resumeIndex, resumeAmount - 1 - resumeIndex);
             storage[resumeAmount] = null;
             resumeAmount--;
@@ -83,10 +111,10 @@ public class ArrayStorage {
 
     public int uuidFinder(String uuid) {
         for (int i = 0; i < resumeAmount; i++) {
-            if (storage[i].toString().equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }
-        return UUID_NOT_FOUND;
+        return -1;
     }
 }
