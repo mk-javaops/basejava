@@ -8,13 +8,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    public static final int MAX_RESUME_AMOUNT = 10000;
+    private static final int MAX_RESUME_AMOUNT = 10000;
     private Resume[] storage = new Resume[MAX_RESUME_AMOUNT];
     private int resumeAmount = 0;
-
-    public int getResumeAmount() {
-        return resumeAmount;
-    }
 
     public void clear() {
         Arrays.fill(storage, 0, resumeAmount, null);
@@ -22,76 +18,37 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        boolean validity = true;
         String uuid = resume.getUuid();
+        int index = getIndex(uuid);
 
-        if (uuid == null) {
-            System.out.println(" ERROR! resume uuid can`t be empty");
-            validity = false;
-        } else if (uuidFinder(uuid) != -1) {
-            System.out.println(" ERROR! Resume save uuid is not unique.");
-            validity = false;
-        } else if (resumeAmount == MAX_RESUME_AMOUNT) {
-            System.out.println(" ERROR! Resume storage is overloaded");
-            validity = false;
-        }
-        if (validity) {
+        if ((uuid != null) & (index == -1)) {
             storage[resumeAmount] = resume;
             resumeAmount++;
-        }
-    }
-
-    public void update(String uuid, Resume resume) {
-        boolean validity = true;
-        int resumeIndex = uuidFinder(uuid);
-        String uuidNew = resume.getUuid();
-
-        if (uuid == null) {
-            System.out.println(" ERROR! uuid of resume can`t be empty");
-            validity = false;
-        } else if (uuidFinder(uuid) == -1) {
-            System.out.println(" Error! Nothing to get. Updated resume does`t exist");
-            validity = false;
-        } else if (uuidFinder(uuidNew) != -1) {
-            System.out.println(" ERROR! Updated resume uuid is not unique.");
-            validity = false;
-        }
-        if (validity) {
-            storage[resumeIndex] = resume;
+        } else {
+            System.out.println("Parameter save uuid ERROR!");
         }
     }
 
     public Resume get(String uuid) {
-        boolean validity = true;
+        int index = getIndex(uuid);
 
-        if (uuid == null) {
-            System.out.println(" ERROR! resume uuid can`t be empty");
-            validity = false;
-        } else if (uuidFinder(uuid) == -1) {
-            System.out.println(" Error! Nothing to get. Resume uuid not found");
-            validity = false;
+        if ((uuid != null) & (index != -1)) {
+            return storage[index];
+        } else {
+            System.out.println("Parameter get uuid ERROR!");
+            return null;
         }
-        if (validity) {
-            return storage[uuidFinder(uuid)];
-        }
-        return null;
     }
 
     public void delete(String uuid) {
-        boolean validity = true;
-        int resumeIndex = uuidFinder(uuid);
+        int index = getIndex(uuid);
 
-        if (uuid == null) {
-            System.out.println(" ERROR! resume uuid can`t be empty");
-            validity = false;
-        } else if (resumeIndex == -1) {
-            System.out.println(" Error! Nothing to delete. Resume uuid not found");
-            validity = false;
-        }
-        if (validity) {
-            System.arraycopy(storage, resumeIndex + 1, storage, resumeIndex, resumeAmount - 1 - resumeIndex);
+        if ((uuid != null) & (index != -1)) {
+            System.arraycopy(storage, index + 1, storage, index, resumeAmount - 1 - index);
             storage[resumeAmount] = null;
             resumeAmount--;
+        } else {
+            System.out.println("Parameter delete uuid ERROR!");
         }
     }
 
@@ -109,7 +66,7 @@ public class ArrayStorage {
         return resumeAmount;
     }
 
-    public int uuidFinder(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < resumeAmount; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;

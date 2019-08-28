@@ -19,10 +19,10 @@ public class MainArray {
         Resume resume;
 
         while (true) {
-            System.out.print("Введите одну из команд - (list | size | save uuid | update uuid resume | delete uuid | get uuid | clear | exit): ");
+            System.out.print("Введите одну из команд - (list | size | save uuid | update uuid | delete uuid | get uuid | clear | exit): ");
             String[] params = reader.readLine().trim().toLowerCase().split(" ");
 
-            if ((params.length < 1) || (params.length > 3)) {
+            if ((params.length < 1) || (params.length > 2)) {
                 System.out.println("Неверная команда.");
                 continue;
             }
@@ -44,11 +44,13 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    System.out.println("введите uuid для создания нового резюме");
-                    String uuidNew = reader.readLine();
-                    resume = new Resume(uuidNew);
-                    ARRAY_STORAGE.update(uuid, resume);
-                    printAll();
+                    resume = ARRAY_STORAGE.get(uuid);
+                    if (resume != null) {
+                        System.out.println("введите uuid для нового резюме");
+                        String uuidNew = reader.readLine();
+                        resume.setUuid(uuidNew);
+                        printAll();
+                    }                 
                     break;
                 case "delete":
                     ARRAY_STORAGE.delete(uuid);
