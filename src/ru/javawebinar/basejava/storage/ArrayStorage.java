@@ -2,6 +2,9 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 /**
@@ -18,37 +21,48 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        String uuid = resume.getUuid();
-        int index = getIndex(uuid);
+        int index = getIndex(resume.getUuid());
 
-        if ((uuid != null) & (index == -1)) {
+        if (index == -1) {
             storage[resumeAmount] = resume;
             resumeAmount++;
         } else {
-            System.out.println("Parameter save uuid ERROR!");
+            System.out.println("ERROR! save uuid is`t unique.");
         }
     }
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
 
-        if ((uuid != null) & (index != -1)) {
+        if (index != -1) {
             return storage[index];
-        } else {
-            System.out.println("Parameter get uuid ERROR!");
-            return null;
         }
+        System.out.println("ERROR! get uuid does not exist");
+        return null;
     }
 
     public void delete(String uuid) {
         int index = getIndex(uuid);
 
-        if ((uuid != null) & (index != -1)) {
+        if (index != -1) {
             System.arraycopy(storage, index + 1, storage, index, resumeAmount - 1 - index);
-            storage[resumeAmount] = null;
+            //TODO
+            storage[resumeAmount - 1] = null;
             resumeAmount--;
         } else {
-            System.out.println("Parameter delete uuid ERROR!");
+            System.out.println("ERROR! delete uuid does not exist");
+        }
+    }
+
+    public void update(Resume resume) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("введите uuid для нового резюме");
+        String uuid = reader.readLine();
+
+        if (getIndex(uuid) == -1) {
+            resume.setUuid(uuid);
+        } else {
+            System.out.println("ERROR! uuid is null or uuid is`t unique.");
         }
     }
 

@@ -46,11 +46,9 @@ public class MainArray {
                 case "update":
                     resume = ARRAY_STORAGE.get(uuid);
                     if (resume != null) {
-                        System.out.println("введите uuid для нового резюме");
-                        String uuidNew = reader.readLine();
-                        resume.setUuid(uuidNew);
+                        ARRAY_STORAGE.update(resume);
                         printAll();
-                    }                 
+                    }
                     break;
                 case "delete":
                     ARRAY_STORAGE.delete(uuid);
