@@ -44,7 +44,7 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    resume = ARRAY_STORAGE.get(uuid);
+                    resume = new Resume(uuid);
                     if (resume != null) {
                         ARRAY_STORAGE.update(resume);
                         printAll();

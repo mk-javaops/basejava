@@ -2,9 +2,6 @@ package ru.javawebinar.basejava.storage;
 
 import ru.javawebinar.basejava.model.Resume;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
 /**
@@ -46,23 +43,20 @@ public class ArrayStorage {
 
         if (index != -1) {
             System.arraycopy(storage, index + 1, storage, index, resumeAmount - 1 - index);
-            //TODO
             storage[resumeAmount - 1] = null;
             resumeAmount--;
         } else {
-            System.out.println("ERROR! delete uuid does not exist");
+            System.out.println("ERROR! delete uuid doesn`t exist");
         }
     }
 
-    public void update(Resume resume) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("введите uuid для нового резюме");
-        String uuid = reader.readLine();
+    public void update(Resume resume) {
+        int index = getIndex(resume.getUuid());
 
-        if (getIndex(uuid) == -1) {
-            resume.setUuid(uuid);
+        if (index != -1) {
+            storage[index] = resume;
         } else {
-            System.out.println("ERROR! uuid is null or uuid is`t unique.");
+            System.out.println("ERROR! update uuid doesn`t exist");
         }
     }
 
